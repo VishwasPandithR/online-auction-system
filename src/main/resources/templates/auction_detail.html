@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="fragments/layout :: body">
+<head>
+    <title th:text="'Auction: ' + ${item.title}">Auction detail</title>
+</head>
+<body>
+<div class="row">
+  <div class="col-md-8">
+    <h3 th:text="${item.title}">Item</h3>
+    <p th:text="${item.description}">Description</p>
+    <p>Seller: <strong th:text="${item.seller.fullName}">Seller</strong></p>
+
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5>Current Price: <span id="currentPrice" th:text="${item.currentPrice != null ? item.currentPrice : item.startingPrice}">0.00</span></h5>
+        <p>End in: <span id="countdown">--:--:--</span></p>
+      </div>
+    </div>
+
+    <div th:if="${#httpServletRequest.remoteUser != null}">
+      <h5>Place Bid</h5>
+      <form id="bidForm">
+        <div class="input-group mb-3">
+          <input type="number" step="0.01" class="form-control" id="bidAmount" placeholder="Enter amount"/>
+          <button type="submit" class="btn btn-primary">Place Bid</button>
+        </div>
+      </form>
+      <div id="bidResult" class="mb-3"></div>
+    </div>
+    <div th:if="${#httpServletRequest.remoteUser == null}">
+      <p><a th:href="@{/login}">Login</a> to place a bid.</p>
+    </div>
+
+    <h5>Bidding History</h5>
+    <ul class="list-group">
+      <li class="list-group-item" th:each="b : ${bids}">
+        <strong th:text="${b.bidder.fullName}">Bidder</strong> bid 
+        <span th:text="${b.amount}">0.00</span> at 
+        <span th:text="${#dates.format(b.placedAt, 'yyyy-MM-dd HH:mm:ss')}">time</span>
+      </li>
+      <li class="list-group-item" th:if="${bids.size()==0}">No bids yet.</li>
+    </ul>
+  </div>
+</div>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+    const auctionId = /*[[${item.id}]]*/ '0';
+    const endTimeIso = /*[[${item.endTime}]]*/ null;
+    function startCountdown(endIso) {
+        if (!endIso) { document.getElementById('countdown').innerText = 'No end time'; return; }
+        const target = new Date(endIso);
+        function tick() {
+            const now = new Date();
+            const diff = target - now;
+            if (diff <= 0) {
+                document.getElementById('countdown').innerText = 'Auction ended';
+                const form = document.getElementById('bidForm');
+                if (form) form.style.display = 'none';
+                return;
+            }
+            const seconds = Math.floor(diff / 1000) % 60;
+            const minutes = Math.floor(diff / (1000 * 60)) % 60;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            document.getElementById('countdown').innerText = hours + ':' + String(minutes).padStart(2,'0') + ':' + String(seconds).padStart(2,'0');
+            setTimeout(tick, 1000);
+        }
+        tick();
+    }
+
+    startCountdown(endTimeIso);
+
+    let stompClient = null;
+    function connectWs() {
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function(frame) {
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/topic/auction.' + auctionId, function(message) {
+                const body = JSON.parse(message.body);
+                document.getElementById('currentPrice').innerText = body.newPrice;
+                const resultDiv = document.getElementById('bidResult');
+                if (resultDiv) {
+                    resultDiv.innerHTML = '<div class="alert alert-info">New bid: ' + body.bidderName + ' — ' + body.newPrice + '</div>';
+                }
+            });
+        });
+    }
+    connectWs();
+
+    const bidForm = document.getElementById('bidForm');
+    if (bidForm) {
+        bidForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const amount = document.getElementById('bidAmount').value;
+            fetch('/api/bids/place?auctionId=' + auctionId + '&amount=' + encodeURIComponent(amount), {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'}
+            }).then(res => res.json())
+              .then(data => {
+                  const result = document.getElementById('bidResult');
+                  if (data.error) {
+                      result.innerHTML = '<div class="alert alert-danger">' + data.error + '</div>';
+                  } else {
+                      result.innerHTML = '<div class="alert alert-success">Bid placed successfully: ' + data.newPrice + '</div>';
+                      document.getElementById('bidAmount').value = '';
+                  }
+              }).catch(err => {
+                  document.getElementById('bidResult').innerHTML = '<div class="alert alert-danger">Error placing bid</div>';
+              });
+        });
+    }
+/*]]>*/
+</script>
+</body>
+</html>

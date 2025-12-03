@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="fragments/layout :: body">
+<head>
+    <title>Auctions</title>
+</head>
+<body>
+<h2>Active Auctions</h2>
+<div class="row">
+  <div class="col-md-8">
+    <div class="list-group">
+      <div th:each="item : ${auctions}" class="list-group-item">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 th:text="${item.title}">Item Title</h5>
+          <small th:text="${#dates.format(item.endTime, 'yyyy-MM-dd HH:mm')}">End</small>
+        </div>
+        <p th:text="${item.description}">Description</p>
+        <p>Current Price: <strong th:text="${item.currentPrice != null ? item.currentPrice : item.startingPrice}">0.00</strong></p>
+        <a class="btn btn-outline-primary" th:href="@{/auctions/{id}(id=${item.id})}">View</a>
+      </div>
+      <div th:if="${auctions.size()==0}" class="alert alert-info">No active auctions right now.</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

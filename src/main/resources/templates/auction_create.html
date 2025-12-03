@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="fragments/layout :: body">
+<head>
+    <title>Create Auction</title>
+</head>
+<body>
+<h3>Create Auction Item</h3>
+<form th:action="@{/auctions/create}" th:object="${item}" method="post">
+  <div class="mb-3">
+    <label>Title</label>
+    <input class="form-control" th:field="*{title}" required/>
+  </div>
+  <div class="mb-3">
+    <label>Description</label>
+    <textarea class="form-control" th:field="*{description}" rows="4"></textarea>
+  </div>
+  <div class="mb-3">
+    <label>Starting Price</label>
+    <input class="form-control" th:field="*{startingPrice}" required/>
+  </div>
+  <div class="mb-3">
+    <label>End time (YYYY-MM-DDTHH:MM)</label>
+    <input class="form-control" type="datetime-local" th:field="*{endTime}" required/>
+  </div>
+  <button class="btn btn-primary" type="submit">Create</button>
+</form>
+</body>
+</html>

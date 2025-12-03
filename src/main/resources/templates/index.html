@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="fragments/layout :: body">
+<head>
+    <title>Home - AuctionApp</title>
+</head>
+<body>
+<div class="jumbotron">
+  <h1>Welcome to AuctionApp</h1>
+  <p>Browse active auctions, place bids and watch updates in real time.</p>
+  <p><a class="btn btn-primary" th:href="@{/auctions}">View Auctions</a></p>
+</div>
+</body>
+</html>
