@@ -1,5 +1,5 @@
 # 🏷️ Online Auction System  
-A real-time online auction platform built with **Spring Boot**, **Thymeleaf**, **Spring Security**, **WebSockets**, and **H2/MySQL**.  
+A real-time online auction platform built with **Spring Boot**, **Thymeleaf**, **Spring Security**, **WebSockets**, and **H2**.  
 Users can create auctions, bid in real time, and view live updates instantly.
 
 ---
@@ -31,7 +31,7 @@ Users can create auctions, bid in real time, and view live updates instantly.
 |-------|------------|
 | Backend | Spring Boot (Web, Security, JPA) |
 | Frontend | Thymeleaf, Bootstrap 5 |
-| Database | H2 (Default) / MySQL (Optional) |
+| Database | H2 (Default) |
 | Real-time | Spring WebSocket, STOMP, SockJS |
 | Build Tool | Maven |
 | Language | Java 17 |
