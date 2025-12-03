@@ -1,25 +1,42 @@
-# Online Auction System
+# 🏷️ Online Auction System  
+A real-time online auction platform built with **Spring Boot**, **Thymeleaf**, **Spring Security**, **WebSockets**, and **H2/MySQL**.  
+Users can create auctions, bid in real time, and view live updates instantly.
 
- **Online Auction System** — A simple real-time auction application built with Java Spring Boot, Thymeleaf, and WebSocket.
+---
 
- ## Features
+## 🚀 Features
 
- - Logging in and registering users (Spring Security)  
- The seller may list auctions with the following details: title, description, starting price, and end time.  
- A dynamic list of ongoing auctions  
- - Real-time bidding with live updates (WebSocket + STOMP + SockJS)  
- For transparency, each auction's bidding history  
- By default, it uses an easy-to-set-up H2 in-memory database; MySQL can be used instead.  
+### 👤 User Features
+- User Registration & Login  
+- Profile-based access (auth required to bid / create auctions)  
+- Secure password encryption (Spring Security)
 
- ## 📦 Tech Stack
+### 🛒 Auction Features
+- Create new auction items (title, description, start price, end time)  
+- View all active auctions  
+- Auction countdown timer  
+- Real-time bid updates (WebSocket + STOMP)
 
- Spring Boot, Java 17, Spring Data JPA, H2, and MySQL  
- Thymeleaf for front-end templates; Spring WebSocket + STOMP (SockJS + STOMP.js); Spring Security; Maven  
+### 💰 Bidding Features
+- Only logged-in users can place bids  
+- Validations ensure higher bid amounts  
+- Real-time updates pushed to all connected clients  
+- Transparent bidding history per item
 
- ## 🛠️ Setup & Run
+---
 
- ```bash # Clone https://github.com/YourUser/online-auction-system.git git clone online-auction-system
+## 🧰 Tech Stack
 
- # Build mvn clean package
+| Layer | Technology |
+|-------|------------|
+| Backend | Spring Boot (Web, Security, JPA) |
+| Frontend | Thymeleaf, Bootstrap 5 |
+| Database | H2 (Default) / MySQL (Optional) |
+| Real-time | Spring WebSocket, STOMP, SockJS |
+| Build Tool | Maven |
+| Language | Java 17 |
 
- # Execute mvn spring-boot:run
+---
+
+## 📦 Project Structure
+
